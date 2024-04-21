@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+src/app/config/local.config.json
+*.log
+*.DS_Store
+.env
+.env.production
