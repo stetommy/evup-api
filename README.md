@@ -1,5 +1,5 @@
-# TEMPLATE API
-Template API with user login, access token ect, docker-compose.yml to build db instance
+# EVUP API
+EVUP API
 
 ## Supported features
 - [x] Mongodb
