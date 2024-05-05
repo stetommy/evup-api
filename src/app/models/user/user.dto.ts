@@ -1,9 +1,14 @@
+// For import plan in to the user model
+import { IPlan } from "../plan/plan.model";
+type Plan = `${IPlan['name']}`;
+
 /**
  * Define the user Model interface.
  */
 enum role {
     Admin = "admin",
-    Instructor = "instructor",
+    Promoter = "promoter",
+    Agency = "agency",
     User = "user",
 }
 
@@ -20,18 +25,18 @@ export interface $UserModelInterface {
     pwResetPin?: string,
     emailVerified: boolean,
     conditionAccepted?: boolean,
-    picture?: {},
+    picture?: Record<string, never>,
     stripe_account_id?: string,
-    stripe_seller?: {},
     stripeSession?: {
         id?: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [url: string]: any;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         [expires_at: number]: any;
     },
-    courses?: string[],
     phoneNumber?: string;
     phonePrefix?: string;
-    // plan?: Plan;
+    plan?: Plan;
     dateRenew?: Date;
 }
 

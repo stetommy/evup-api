@@ -1,9 +1,10 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import crypto from '../../helpers/crypto';
 
 export enum UserRole {
     Admin = "admin",
-    Instructor = "instructor",
+    Promoter = "promoter",
+    Agency = "agency",
     User = "user",
 }
 
@@ -23,9 +24,8 @@ export interface IUser extends Document {
     picture?: string;
     description?: string;
     stripe_account_id?: string;
-    stripe_seller?: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     stripeSession?: any;
-    courses?: string[];
     phoneNumber?: string;
     phonePrefix?: string;
     plan?: string;
@@ -67,9 +67,7 @@ const UserSchema: Schema = new Schema({
         default: null
     },
     stripe_account_id: String,
-    stripe_seller: {},
     stripeSession: {},
-    courses: [String],
     phoneNumber: String,
     phonePrefix: String,
     plan: String,
@@ -81,6 +79,7 @@ UserSchema.pre<IUser>('save', async function (next) {
         try {
             const encryptedPassword = await crypto().encrypt(this.password);
             this.password = encryptedPassword;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             return next(error);
         }

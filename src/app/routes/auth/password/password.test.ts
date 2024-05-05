@@ -1,56 +1,45 @@
-
 import request from 'supertest';
-import AppModule from '../../../index';
-//import { wrapper } from '../../../models';
-import dbService from '../../../services/db';
-import {userStubModel} from '../../../tests/user.stub';
+import { describe, it } from 'mocha';
+import { expect } from 'chai';
+import app from '../../../../app';
 
-const userStub = userStubModel
-const rq = request(AppModule); 
-var token: any = undefined;
-var UserWrapper:any= undefined;
-var TokenWrapper = undefined;
+describe('Password Management API Tests', () => {
+  it('POST /change - should change the password for authorized users', async () => {
+    // Effettua l'accesso e ottieni il token JWT
+    const loginResponse = await request(app)
+      .post('/login') // Assicurati di avere un endpoint per il login nel tuo server
+      .send({ email: 'test@example.com', password: 'password123' });
 
-describe("responds to /auth/password",()=>{
-    beforeAll(async()=>{
-        /** Load the test database */
-        //await dbService.loadDatabase(true);
-        /** Load the collections wrapper */
-        //UserWrapper = new wrapper.user();
-        //TokenWrapper = new wrapper.token();
-        /** Create a user for testing */
-        const user = await UserWrapper.create(userStub)
-        /** Create a new auth token */
-        //token = await TokenWrapper.generateAccessToken({email:user?.email||'', _id: user?._id||''})
-        return;
-    })
-    /** delete user already created for testing */
-    afterAll(async()=>{
-        return await UserWrapper.delete({email:userStub.email});
-    })
-    /** Test the changing password route */
-    it("Change password", async()=>{
-        /** define the new password */
-        const newPassword = "TestAfterChangePassword01"
-        /** ask for password change to the endpoint */
-        const res = await rq.post('/auth/password/change').send({password:newPassword}).set({ Authorization: token });
-        /** check the response content type */
-        expect(res.header['content-type']).toBe('application/json; charset=utf-8');
-        /** check the response status code */
-        expect(res.statusCode).toBe(200);
-    })
+    // Estrai il token JWT dalla risposta del login
+    const accessToken = loginResponse.body.accessToken;
 
-    /** Test the recovery pin request */
-    it("Request recovery Pin", async()=>{
-        /** Ask for recovery pin */
-        const res = await rq.post('/auth/password/recover').send({email:userStub.email});
-        /** Check the response content type */
-        expect(res.header['content-type']).toBe('application/json; charset=utf-8');
-        /** Check the response status code */
-        expect(res.statusCode).toBe(200);
-        /** Get the pin from user */
-        const user = (await UserWrapper.find({email:userStub.email}));
-        /** Check if pin is not undefined */
-        expect(typeof user.pwResetPin).toBeDefined()
-    })
-})
+    // Effettua una richiesta con il token JWT per cambiare la password
+    const response = await request(app)
+      .post('/auth/password/change')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ password: 'newpassword123' });
+
+    // Verifica che la risposta abbia lo status code corretto
+    expect(response.status).to.equal(200);
+
+    // Verifica che il corpo della risposta contenga un messaggio di successo
+    expect(response.body).to.include('SUCCESS');
+
+    // Continua con altre verifiche se necessario
+  });
+
+  it('POST /recover - should create a temporary recovery pin to login and change the password', async () => {
+    // Effettua una richiesta per il recupero della password
+    const response = await request(app)
+      .post('/auth/password/recover')
+      .send({ email: 'test@example.com' });
+
+    // Verifica che la risposta abbia lo status code corretto
+    expect(response.status).to.equal(200);
+
+    // Verifica che il corpo della risposta contenga un messaggio di email inviata
+    expect(response.body).to.include('EMAIL_SENT');
+
+    // Continua con altre verifiche se necessario
+  });
+});

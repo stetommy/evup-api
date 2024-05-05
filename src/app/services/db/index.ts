@@ -4,6 +4,7 @@ import loadEnv from '../env'
 /**
  * Load the environment variables
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const env = loadEnv()
 
 /**

@@ -6,6 +6,7 @@ import cookies from '../../../services/cookies';
 import RefreshTokenService from '../../../services/token/index';
 import RefreshTokenModel from '../../../models/refresh-token/refresh-token.model';
 import UserModel from '../../../models/user/user.model';
+import { Request, Response } from 'express';
 
 const route = express.Router();
 const env = loadEnv();
@@ -21,7 +22,7 @@ route.post('/refresh', refreshAuthTokenByRefreshToken);
  * @param res Response
  * @returns The updated cookie, and success or not
  */
-async function refreshAuthTokenByRefreshToken(req: any, res: any) {
+async function refreshAuthTokenByRefreshToken(req: Request, res: Response) {
   /* const TokenWrapper = new wrapper.token(); */
   // OLD CODE => const refreshToken = req.body.refreshToken;
 
@@ -31,6 +32,7 @@ async function refreshAuthTokenByRefreshToken(req: any, res: any) {
   const exists = await RefreshTokenModel.findOne({ refreshToken: refreshToken });
   if (!exists) return res.status(403).json([$AuthErrorEnum.INVALID_REFRESH_TOKEN]);
   /** Authenticate Token */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   jwt.verify(refreshToken, env.REFRESH_TOKEN_SECRET, async (err: any, user: any) => {
     /** Retrive user from db */
     const dbUser = await UserModel.findById(user.uid, {email: 1, role: 1})

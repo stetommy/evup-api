@@ -65,7 +65,7 @@ async function createUserWithEmailAndPassword(req: Request, res: Response) {
  * @param res Response
  * @returns Response Body
  */
-async function verifyEmailAddress(req: any, res: any) {
+async function verifyEmailAddress(req: Request, res: Response) {
   const encodedEmail = req.params.email;
   /** decode b64 email */
   const email = crypto().b64decode(encodedEmail);

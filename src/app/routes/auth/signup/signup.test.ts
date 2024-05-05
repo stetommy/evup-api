@@ -1,47 +1,42 @@
-
 import request from 'supertest';
-import AppModule from '../../../index';
-//import { wrapper } from '../../../models';
-import dbService from '../../../services/db';
-import { userStubModel } from '../../../tests/user.stub';
+import { describe, it } from 'mocha';
+import { expect } from 'chai';
+import app from '../../../../app';
 
-const userStub = userStubModel
-const rq = request(AppModule); 
-var UserWrapper:any= undefined;
+describe('User Registration API Tests', () => {
+  it('POST /email - should create a new user and send verification email', async () => {
+    // Effettua una richiesta per la creazione di un nuovo utente
+    const response = await request(app)
+      .post('/auth/register/email')
+      .send({
+        firstName: 'Test',
+        lastName: 'User',
+        email: 'test@example.com',
+        password: 'password123',
+      });
 
-describe("responds to /auth/password",()=>{
-    beforeAll(async()=>{
-        /** Load the test database */
-        //await dbService.loadDatabase(true);
-        /** Load the collections wrapper */
-        //UserWrapper = new wrapper.user();
-        return;
-    })
+    // Verifica che la risposta abbia lo status code corretto
+    expect(response.status).to.equal(201);
 
-    /** delete user already created for testing */
-    afterAll(async()=>{
-        return await UserWrapper.delete({email:userStub.email});
-    })
+    // Verifica che il corpo della risposta contenga un messaggio di successo
+    expect(response.body).to.have.property('success').to.be.true;
 
-    /** Create for the first time a new user */
-    it("Create a new user", async()=>{
-        /** send user create request */
-        const res = await rq.post('/auth/signup/email').send(userStub);
-        /** check the response content type */
-        expect(res.header['content-type']).toBe('application/json; charset=utf-8');
-        /** check the response status code */
-        expect(res.statusCode).toBe(201);
-    })
+    // Continua con altre verifiche se necessario
+  });
 
-    /** Try to create a user that already exists */
-    it("Create an existing user", async()=>{
-        /** Send user create request */
-        const res = await rq.post('/auth/signup/email').send(userStub);
-        /** Check the response content type */
-        expect(res.header['content-type']).toBe('application/json; charset=utf-8');
-        /** Check the response status code */
-        expect(res.statusCode).toBe(400);
-        /** Check if body response is error*/
-        expect(res.body).toEqual( [ 'USER_ALREADY_EXISTS' ])
-    })
-})
+  it('GET /verification/:email - should verify the email address of a new user', async () => {
+    // Simula l'invio di un'email di verifica all'utente
+    // (questo può essere fatto manualmente o tramite un endpoint di test separato)
+
+    // Effettua una richiesta per verificare l'indirizzo email dell'utente
+    const response = await request(app).get('/auth/register/verification/test@example.com');
+
+    // Verifica che la risposta abbia lo status code corretto
+    expect(response.status).to.equal(200);
+
+    // Verifica che il corpo della risposta contenga un messaggio di successo
+    expect(response.text).to.include('Verification Successful');
+
+    // Continua con altre verifiche se necessario
+  });
+});

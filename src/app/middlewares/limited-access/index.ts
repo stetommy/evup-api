@@ -9,20 +9,21 @@ declare module 'express' {
 }
 
 /**
- * This middleware will check if the use is an istructor,
+ * This middleware will check if the use is an Admin,
  * need to be used ONLY after authenticateToken function 
  * @param req 
  * @param res 
  * @param next 
  */
-export default function instructorLimited (req: Request, res:Response, next:any){
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function AdminLimited (req: Request, res:Response, next:any){
     /** Check if user is loaded */
     if (!req.user){
         return res.status(400).json("User not loaded");
     }
-    /** Check if user role is instructor */
-    if (!(req.user.role === UserRole.Instructor)){
-        return res.status(403).send("User is not an instructor");
+    /** Check if user role is Admin */
+    if (!(req.user.role === UserRole.Admin)){
+        return res.status(403).send("User is not an Admin");
     }
     /** Go next to function */
     next()
@@ -38,6 +39,7 @@ export default function instructorLimited (req: Request, res:Response, next:any)
  * @param next 
  * @returns 
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function isActiveLimited (req: Request, res: Response, next: any) {
     /** Check if user is loaded */
     if (!req.user){

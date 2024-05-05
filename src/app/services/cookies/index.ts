@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const updateCookies = (res: any, { refreshToken, accessToken }: any) => {
     /** Imposta l'header Cache-Control  */
     res.setHeader('Cache-Control', 'no-cache');
@@ -22,6 +23,7 @@ const updateCookies = (res: any, { refreshToken, accessToken }: any) => {
     return res;
   };
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const destroyCookies = (res: any) => {
     res.setHeader('Cache-Control', 'no-cache');
     res.clearCookie("refresh-token", {

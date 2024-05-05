@@ -6,3 +6,4 @@ src/app/config/local.config.json
 *.DS_Store
 .env
 .env.production
+env.development.local

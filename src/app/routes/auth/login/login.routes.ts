@@ -6,9 +6,10 @@ import cookies from '../../../services/cookies';
 import UserService from '../../../services/user/index';
 import UserModel from '../../../models/user/user.model';
 import RefreshTokenService from '../../../services/token/index';
-// import { minioGetImageUrl } from '../../../services/files';
+import { minioGetImageUrl } from '../../../services/media';
 
 const route = express.Router();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const env = loadEnv();
 
 /**
@@ -26,7 +27,7 @@ route.get('/logout', logoutUserDestroyTokens);
 async function loginUserWithEmailAndPassword(req: Request, res: Response) {
   try {
     /** Change password? */
-    let changePassword = false
+    let changePassword = false;
     /** Load the data from body request */
     const { email, password } = req.body;
     /** Validate body data model */
@@ -38,8 +39,8 @@ async function loginUserWithEmailAndPassword(req: Request, res: Response) {
     const mustChangePassword = user?.pwResetPin;
     /** If user must change password set true to return it and delete the actual pin from db */
     if (mustChangePassword) {
-      await UserModel.findOneAndUpdate({email: user?.email}, {pwResetPin: null})
-      changePassword = true
+      await UserModel.findOneAndUpdate({ email: user?.email }, { pwResetPin: null });
+      changePassword = true;
     }
     /** Manage jwt auth tokens */
     const jwtUser = { email: user?.email, _id: user?._id, role: user?.role } as $JwtUserInterface;
@@ -51,12 +52,12 @@ async function loginUserWithEmailAndPassword(req: Request, res: Response) {
     /** Update user last login */
     await UserModel.findOneAndUpdate({ email: email }, { lastLogin: new Date() });
     /** Fetch user image url if user has image*/
-    let userImageUrl
-    // if(user?.picture){
-    //   userImageUrl = await minioGetImageUrl(user?.picture || '', 604800);
-    // }else{
-    //   userImageUrl = null;
-    // }
+    let userImageUrl;
+    if (user?.picture) {
+      userImageUrl = await minioGetImageUrl(user?.picture || '', 604800);
+    } else {
+      userImageUrl = null;
+    }
     /** Build the response object */
     const response = Object.freeze({
       success: true,
@@ -72,7 +73,7 @@ async function loginUserWithEmailAndPassword(req: Request, res: Response) {
       dateRenew: user?.dateRenew,
       changePassword,
       description: user?.description,
-      // picture: userImageUrl
+      picture: userImageUrl
     });
     // return the response object
     return res.status(200).json(response);

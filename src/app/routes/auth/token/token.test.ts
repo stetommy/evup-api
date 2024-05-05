@@ -1,39 +1,30 @@
-
 import request from 'supertest';
-import AppModule from '../../../index';
-//import { wrapper } from '../../../models';
-import dbService from '../../../services/db';
-import { userStubModel } from '../../../tests/user.stub';
+import { describe, it } from 'mocha';
+import { expect } from 'chai';
+import jwt from 'jsonwebtoken';
+import app from '../../../../app';
 
-const userStub = userStubModel
-const rq = request(AppModule);
-var UserWrapper:any = undefined;
-var user:any = undefined;
-describe("responds to /auth/login",()=>{
-    beforeAll(async()=>{
-        /** Load the test database */
-        //await dbService.loadDatabase(true);
-        /** Load the user collection wrapper */
-        //UserWrapper = new wrapper.user();
-        /** Create a user for testing */
-        user = await UserWrapper.create(userStub)
-        return;
-    })
-    /** delete user already created for testing */
-    afterAll(async()=>{
-        return await UserWrapper.delete({email:userStub.email});
-    })
-    /** Test user login without verified email */
-    it("Login without validating email", async()=>{
-        //const TokenWrapper = new wrapper.token()
-        //const refreshToken:any = await TokenWrapper.updateRefreshToken({email:user?.email||'', _id:user?._id||''}, user?._id||'');
-        //const res = await rq.post("/auth/token/refresh").send({refreshToken:refreshToken});
-        /** check the response content type */
-        //expect(res.header['content-type']).toBe('application/json; charset=utf-8');
-        /** check the response status code */
-        //expect(res.statusCode).toBe(200);
-        /** check the body response */
-        //expect(res.body.accessToken).toBeDefined();
-        //expect(res.body.refreshToken).toEqual(refreshToken);
-    })
-})
+describe('Token Refresh API Tests', () => {
+  it('POST /refresh - should refresh auth token by refresh token', async () => {
+    // Effettua il login e ottieni il refresh token valido
+    const loginResponse = await request(app)
+      .post('/login') // Assicurati di avere un endpoint per il login nel tuo server
+      .send({ username: 'example_username', password: 'example_password' });
+
+    // Estrai il refresh token dalla risposta del login
+    const refreshToken = loginResponse.body.refreshToken;
+
+    // Effettua una richiesta per aggiornare il token di autenticazione utilizzando il refresh token
+    const response = await request(app)
+      .post('/auth/refresh')
+      .set('Cookie', [`refresh-token=${refreshToken}`]);
+
+    // Verifica che la risposta abbia lo status code corretto
+    expect(response.status).to.equal(200);
+
+    // Verifica che il corpo della risposta contenga success: true
+    expect(response.body).to.have.property('success').to.be.true;
+
+    // Continua con altre verifiche se necessario
+  });
+});

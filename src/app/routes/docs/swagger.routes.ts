@@ -14,7 +14,7 @@ const swaggerOptions={
     definition:{
         openapi: '3.0.0',
         info: {
-            title: 'Library api',
+            title: 'EVUP-API-TESTER',
             version: '1.0.0',
             description: 'A simple Express library API'
         },

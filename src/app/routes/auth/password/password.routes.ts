@@ -8,6 +8,7 @@ import { $SmtpEmailsCustomIds } from '../../../services/smtp/smtp.dto';
 import { buildEmailHtmlContext } from '../../../statics';
 import UserModel from '../../../models/user/user.model';
 import UserService from '../../../services/user/index';
+import { Request, Response } from 'express';
 
 const route = express.Router();
 const env = loadEnv();
@@ -24,12 +25,13 @@ route.post('/recover', askForPasswordRecoveryPin);
  * @param res Response
  * @returns Response Body
  */
-async function changePasswordWithAuthToken(req: any, res: any) {
+async function changePasswordWithAuthToken(req: Request, res: Response) {
   try {
     const { password } = req.body;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const uid = (req as any)?.user?._id;
     /** Validity Check */
-    const valid = await UserService.isPasswordChangeUserByEmailFormValid({ password: password }, uid);
+    const valid = await UserService.isPasswordChangeUserByEmailFormValid({ password: password }, uid!);
     if (!valid.valid) return res.status(400).json(valid.errors);
     /** Save old passowrd if errors occurs */
     const old = await UserModel.findById(uid);
@@ -60,7 +62,7 @@ async function changePasswordWithAuthToken(req: any, res: any) {
  * @param res Response
  * @returns Response Body
  */
-async function askForPasswordRecoveryPin(req: any, res: any) {
+async function askForPasswordRecoveryPin(req: Request, res: Response) {
   try {
     const { email } = req.body;
     /** Validity Check */
@@ -76,7 +78,7 @@ async function askForPasswordRecoveryPin(req: any, res: any) {
     });
     /** Send the email */
     sendSimpleEmail(env.NOREPLY_EMAIL, html, 'Password Reset Request', email, $SmtpEmailsCustomIds.PASSWORD_RECOVER)
-      .then((success) => {
+      .then(() => {
         return res.status(200).json(['EMAIL_SENT']);
       })
       .catch((e) => {
