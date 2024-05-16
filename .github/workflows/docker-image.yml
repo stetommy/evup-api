@@ -3,10 +3,10 @@ name: Build and Publish Docker image
 on:
   push:
     branches:
-      - production
+      - staging
   pull_request:
     branches:
-      - production
+      - staging
 
 jobs:
   build:
