@@ -32,10 +32,10 @@ export async function createEvent(req: Request, res: Response) {
     /** Get data from body */
     const data = req.body;
     /** Check if this event already exists */
-    const alreadyExist = await EventModel.findOne({ slug: slugify(data.name) });
+    const alreadyExist = await EventModel.findOne({ slug: slugify(data.title) });
     if (alreadyExist) return res.status(400).json({ success: false, error: 'Event name already existing' });
     /** Creating new event */
-    await EventModel.create({ ...data, slug: slugify(data.name) });
+    await EventModel.create({ ...data, slug: slugify(data.title) });
     /** Return created event for feed-back */
     return res.status(201).json({ success: true });
   } catch (err) {
@@ -78,13 +78,23 @@ export async function deleteEvent(req: Request, res: Response) {
   }
 }
 
+/**
+ * Return all public events. It works also if user is not loggen in
+ * @param req
+ * @param res
+ * @returns
+ */
 export async function getEvents(req: Request, res: Response) {
   try {
+    /** Find all events in DB */
     const events = await EventModel.find();
+    /** Return the event object */
     return res.status(200).json(events);
   } catch (err) {
+    /** Log error */
     console.error('GET EVENTS ERROR =>', err);
-    return res.status(500).json({ error: 'Server error' });
+    /** Return error */
+    return res.status(500).json({ success: false, error: 'Get events error. Please try again' });
   }
 }
 
