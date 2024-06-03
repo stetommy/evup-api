@@ -29,10 +29,6 @@ route.get('/getby/:eventSlug', getEventBySlug);
  */
 export async function createEvent(req: Request, res: Response) {
   try {
-    /** Check if user exist and is logged in, else return error */
-    if (!req.user) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
     /** Get data from body */
     const data = req.body;
     /** Check if this event already exists */

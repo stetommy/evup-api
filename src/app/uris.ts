@@ -20,5 +20,5 @@ export const RouteList:$RouteInterface[]=[
     {path: '/swagger', module: DocsSwaggerRoute},
     {path: '/auth/extra', module: AuthExtraRoute},
     {path: '/plan', module: PlanRoute},
-    {path: '/event', module: eventRoutes},
+    {path: '/events', module: eventRoutes},
 ]
