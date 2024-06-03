@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import EventModel from '../../models/event/event.model';
 import authenticateToken from '../../middlewares/authenticate-token';
 import { OrganizerLimited } from '../../middlewares/limited-access';
+import slugify from 'slugify';
 
 /** Router definition */
 const route = express.Router();
@@ -22,25 +23,30 @@ route.get('/getby/:eventSlug', getEventBySlug);
 
 /**
  * Will create a new Event
- * @param req 
- * @param res 
+ * @param req
+ * @param res
  * @returns True (event created) or False (error)
  */
 export async function createEvent(req: Request, res: Response) {
   try {
+    /** Check if user exist and is logged in, else return error */
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-
-    const event = new EventModel({
-      ...req.body,
-      organizer: req.user._id,
-    });
-    const savedEvent = await event.save();
-    return res.status(201).json(savedEvent);
+    /** Get data from body */
+    const data = req.body;
+    /** Check if this event already exists */
+    const alreadyExist = await EventModel.findOne({ slug: slugify(data.name) });
+    if (alreadyExist) return res.status(400).json({ success: false, error: 'Event name already existing' });
+    /** Creating new event */
+    await EventModel.create({ ...data, slug: slugify(data.name) });
+    /** Return created event for feed-back */
+    return res.status(201).json({ success: true });
   } catch (err) {
+    /** Log error in console */
     console.error('CREATE EVENT ERROR =>', err);
-    return res.status(500).json({ error: 'Server error' });
+    /** Return error */
+    return res.status(500).json({ success: false, error: 'Failed to create new event. Please try again.' });
   }
 }
 
