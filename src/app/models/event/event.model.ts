@@ -1,21 +1,78 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
-interface IEvent extends Document {
-  title: string;
-  description: string;
-  date: Date;
-  location: string;
-  organizer: mongoose.Schema.Types.ObjectId;
-  image: string;
+enum Currency {
+  EUR = '€',
+  USD = '$',
+  CHF = 'CHF',
+  NZD = 'NZD',
+  GBP = 'GBP',
+  CAD = 'CAD',
+  AUD = 'AUD',
+  BTC = 'BTC',
+  ETH = 'ETH',
 }
 
-const EventSchema: Schema = new Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  date: { type: Date, required: true },
-  location: { type: String, required: true },
-  organizer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  image: { type: String, required: false }
-});
+enum Type {
+  OP = 'Open Bar',
+  FE = 'Free Entry',
+  AC = 'A Consumazione',
+  PV = 'Privato',
+}
 
-export default mongoose.model<IEvent>('Event', EventSchema);
+export interface IEvent extends Document {
+  _id: string;
+  title: string;
+  sbtitle: string;
+  address: string;
+  special_guest: [ISpecialGuest];
+  tags: [];
+  description: string;
+  time_start: Date;
+  time_end: Date;
+  type: Type;
+  currency: Currency;
+  picture_id: string;
+  updated_on: Date;
+  created_by: Date;
+  details: JSON;
+}
+
+export interface ISpecialGuest extends Document {
+  _id: string;
+  name: string;
+}
+
+const specialGuestSchema: Schema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true },
+);
+
+const eventSchema: Schema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    slug: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    special_guest: {
+      type: specialGuestSchema,
+    },
+  },
+  { timestamps: true },
+);
+
+const eventModel = mongoose.model<IEvent>('Events', eventSchema);
+export default eventModel;
+
