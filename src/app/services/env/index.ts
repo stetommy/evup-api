@@ -9,10 +9,10 @@ export default function loadEnv() {
   /** Specify the path to your custom .env file (optional) */
 
   /** Prod */
-  //const EnvPath = '';
+  const EnvPath = '';
 
   /** Dev */
-  const EnvPath = '.env.development';
+  //const EnvPath = '.env.development';
 
   /** Default to .env if envPath is not provided */
   const envFilePath = EnvPath || './.env';
