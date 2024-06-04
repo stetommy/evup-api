@@ -17,7 +17,7 @@ const env = loadEnv();
  */
 route.post('/create', authenticateToken, OrganizerLimited, createEvent);
 route.put('/update/:eventSlug', authenticateToken, OrganizerLimited, updateEvent);
-route.delete('/delete/:eventSlug', authenticateToken, OrganizerLimited, deleteEvent);
+route.delete('/remove/:eventSlug', authenticateToken, OrganizerLimited, deleteEvent);
 route.get('/get', getEvents);
 route.get('/getby/:eventSlug', getEventBySlug);
 
@@ -46,40 +46,59 @@ export async function createEvent(req: Request, res: Response) {
   }
 }
 
+/**
+ * This function is used to update event
+ * @param req
+ * @param res
+ * @returns
+ */
 export async function updateEvent(req: Request, res: Response) {
   try {
-    if (!req.user) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const { id } = req.params;
-    const updatedEvent = await EventModel.findByIdAndUpdate(id, req.body, { new: true });
-    if (!updatedEvent) return res.status(404).json({ error: 'Event not found' });
-    return res.status(200).json(updatedEvent);
-  } catch (err) {
-    console.error('UPDATE EVENT ERROR =>', err);
-    return res.status(500).json({ error: 'Server error' });
-  }
-}
-
-export async function deleteEvent(req: Request, res: Response) {
-  try {
-    if (!req.user) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const { id } = req.params;
-    const deletedEvent = await EventModel.findByIdAndDelete(id);
-    if (!deletedEvent) return res.status(404).json({ error: 'Event not found' });
+    /** Get the evbnt slug from params */
+    const { eventSlug } = req.params;
+    /** Get new event data from body */
+    const data = req.body;
+    /** Check if the user is creator of the event and have the correct permission to delete */
+    return res.status(500).json({ success: false });
+    /** Need check if this event has already same propierties */
+    return res.status(500).json({ success: false });
+    /** Find and update the correct event */
+    await EventModel.findOneAndUpdate({ slug: eventSlug }, data);
+    /** Return successful updated event */
     return res.status(200).json({ success: true });
   } catch (err) {
-    console.error('DELETE EVENT ERROR =>', err);
-    return res.status(500).json({ error: 'Server error' });
+    console.error('UPDATE EVENT ERROR =>', err);
+    return res.status(500).json({ success: false, error: 'Server error' });
   }
 }
 
 /**
- * Return all public events. It works also if user is not loggen in
+ * This function remove specified event by the unique slug
+ * @param req
+ * @param res
+ * @returns
+ */
+export async function deleteEvent(req: Request, res: Response) {
+  try {
+    /** Get paramas from delete request */
+    const { eventSlug } = req.params;
+    /** Check if this event exists */
+    const alreadyExist = await EventModel.findOne({ slug: eventSlug });
+    if (!alreadyExist) return res.status(400).json({ success: false, error: 'Event doesnt existing' });
+    /** Find & delete the specified event */
+    await EventModel.findOneAndDelete({ slug: eventSlug });
+    /** Return success operation */
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    /** Log in console error */
+    console.error('DELETE EVENT ERROR =>', err);
+    /** Return error to the client */
+    return res.status(500).json({ success: false, error: 'Delete event unsucessful' });
+  }
+}
+
+/**
+ * Return all public events. It works also if user is not loggen in. Next to implement it's filtered return not all data, meno carico sul db e dati da rasferire invece l'interezza dei dati verràa mandata con la richiesta di uno specifico evento con il suo slug
  * @param req
  * @param res
  * @returns
@@ -98,15 +117,27 @@ export async function getEvents(req: Request, res: Response) {
   }
 }
 
+/**
+ * This funciton retunr specific event by slug search, all data of the specified event
+ * @param req
+ * @param res
+ * @returns
+ */
 export async function getEventBySlug(req: Request, res: Response) {
   try {
-    const { id } = req.params;
-    const event = await EventModel.findById(id);
-    if (!event) return res.status(404).json({ error: 'Event not found' });
+    /** Get slug from the request params */
+    const { eventSlug } = req.params;
+    /** Serach the specific event in db */
+    const event = await EventModel.findOne({ slug: eventSlug });
+    /** If this event not exist return error */
+    if (!event) return res.status(404).json({ success: false, error: 'Event not found' });
+    /** elese return the finded event */
     return res.status(200).json(event);
   } catch (err) {
+    /** Log in console the catchaded error */
     console.error('GET EVENT BY ID ERROR =>', err);
-    return res.status(500).json({ error: 'Server error' });
+    /** Return the cathed error */
+    return res.status(500).json({ success: false, error: 'Server error' });
   }
 }
 

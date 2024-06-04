@@ -80,6 +80,7 @@ const eventSchema: Schema = new Schema(
     slug: {
       type: String,
       required: true,
+      unique: true,
     },
     sbtitle: {
       type: String,
