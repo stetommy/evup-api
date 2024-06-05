@@ -9,6 +9,7 @@ import FetchUserRoute from './routes/auth/fetch/fetchUser.routes'
 import AuthExtraRoute from './routes/auth/update/update.routes'
 import PlanRoute from './routes/plan/plan.routes'
 import eventRoutes from "./routes/event/event.routes"
+import adminUserEditRoute from "./routes/admin/userEdit/userEdit.routes"
 
 export const RouteList:$RouteInterface[]=[
     {path: '/auth/login', module: AuthLoginRoute},
@@ -21,4 +22,5 @@ export const RouteList:$RouteInterface[]=[
     {path: '/auth/extra', module: AuthExtraRoute},
     {path: '/plan', module: PlanRoute},
     {path: '/events', module: eventRoutes},
+    {path: '/admin/user', module: adminUserEditRoute},
 ]
