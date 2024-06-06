@@ -34,9 +34,8 @@ export interface IEvent extends Document {
   currency: Currency;
   picture_id: string;
   updated_on: Date;
-  created_by: string;
   details: JSON;
-  createdby: string;
+  created_by: string;
 }
 
 export interface ISpecialGuest extends Document {
@@ -119,13 +118,10 @@ const eventSchema: Schema = new Schema(
       type: Date,
       default: Date.now 
     },
-    created_by: {
-      type: String,
-    },
     details: {
       type: Schema.Types.Mixed,
     },
-    createdby: {
+    created_by: {
       type: String,
       required: true,
     }

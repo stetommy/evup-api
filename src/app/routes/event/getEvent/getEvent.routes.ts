@@ -56,10 +56,12 @@ export async function getEventBySlug(req: Request, res: Response) {
  */
 export async function getOrganizerEvent(req: Request, res: Response) {
   try {
-    const userEvent = await EventModel.find({createdby: req.params.userEmail})
-    return res.status(200).json(userEvent);
+    /** Return all the event of the user logged in if it's an organizer*/
+    return res.status(200).json(await EventModel.find({created_by: req!.user!.email}));
   } catch (err) {
-    console.log(err);
-    return res.sendStatus(500);
+    /** Console log the error occured */
+    console.log('Get Organizer event ERROR => ',err);
+    /** Return error to the client */
+    return res.status(500).json({ success: false, error: 'Server error' });
   }
 }

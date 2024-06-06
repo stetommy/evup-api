@@ -22,7 +22,7 @@ route.delete('/remove/:eventSlug', authenticateToken, OrganizerLimited, deleteEv
 /** This section is only for /get function */
 route.get('/get', getAllEvents);
 route.get('/getby/slug/:eventSlug', getEventBySlug);
-route.get('/getby/email/:userEmail', authenticateToken, OrganizerLimited, getOrganizerEvent);
+route.get('/getby/loggedUser', authenticateToken, OrganizerLimited, getOrganizerEvent);
 
 /**
  * Will create a new Event
@@ -38,7 +38,7 @@ export async function createEvent(req: Request, res: Response) {
     const alreadyExist = await EventModel.findOne({ slug: slugify(data.title) });
     if (alreadyExist) return res.status(400).json({ success: false, error: 'Event name already existing' });
     /** Creating new event */
-    await EventModel.create({ ...data, slug: slugify(data.title), createdby: req!.user!.email });
+    await EventModel.create({ ...data, slug: slugify(data.title), created_by: req!.user!.email });
     /** Return created event for feed-back */
     return res.status(201).json({ success: true });
   } catch (err) {
