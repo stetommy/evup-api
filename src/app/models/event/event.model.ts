@@ -36,6 +36,7 @@ export interface IEvent extends Document {
   updated_on: Date;
   created_by: string;
   details: JSON;
+  createdby: string;
 }
 
 export interface ISpecialGuest extends Document {
@@ -124,6 +125,10 @@ const eventSchema: Schema = new Schema(
     details: {
       type: Schema.Types.Mixed,
     },
+    createdby: {
+      type: String,
+      required: true,
+    }
   },
   { timestamps: true },
 );
