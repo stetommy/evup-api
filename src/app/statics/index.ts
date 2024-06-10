@@ -15,7 +15,7 @@ export default async function readFileFromStatics(path:$TemplatePathEnum, fileNa
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     return new Promise((res:any,rej:any)=>{
         /** for prod add /usr/ */
-        fs.readFile(`src/app/statics/${path}/${fileName}`,'utf-8',(err, resp)=>{
+        fs.readFile(`/usr/src/app/statics/${path}/${fileName}`,'utf-8',(err, resp)=>{
             if(err) throw new Error("Email reading error");
             res(resp);
         })
