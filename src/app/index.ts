@@ -19,7 +19,7 @@ const AppModule = express();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const bodyParser = require("body-parser");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const cors = require("cors");
+//const cors = require("cors");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const helmet = require("helmet");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -53,7 +53,7 @@ AppModule.use(cookieParser());
 /**
  * Enabling CORS for all requests
  */
-AppModule.use(cors({ origin: [process.env.CORS_ORIGIN1, process.env.CORS_ORIGIN2], credentials: true }));
+//AppModule.use(cors({ origin: [process.env.CORS_ORIGIN1, process.env.CORS_ORIGIN2], credentials: true }));
 
 /**
  * Adding morgan to log HTTP requests
