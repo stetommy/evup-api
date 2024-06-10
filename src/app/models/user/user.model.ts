@@ -5,6 +5,7 @@ export enum UserRole {
     Admin = "admin",
     Promoter = "promoter",
     Agency = "agency",
+    Organizer = "organizer",
     User = "user",
 }
 
@@ -88,5 +89,4 @@ UserSchema.pre<IUser>('save', async function (next) {
 });
 
 const UserModel = mongoose.model<IUser>('User', UserSchema);
-
 export default UserModel;

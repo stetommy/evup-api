@@ -88,6 +88,7 @@ async function removePlans(req: Request, res: Response) {
     /** Return success response */
     return res.status(200).json({ success: true });
   } catch (err) {
+    /** Log the error in console */
     console.error('REMOVE PLAN ERROR => ', err);
     /** Return error */
     return res.status(500).json({ success: false, error: 'Failed to remove plan. Please try again.' });

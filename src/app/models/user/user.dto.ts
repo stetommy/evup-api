@@ -9,6 +9,7 @@ enum role {
     Admin = "admin",
     Promoter = "promoter",
     Agency = "agency",
+    Organizer = "organizer",
     User = "user",
 }
 

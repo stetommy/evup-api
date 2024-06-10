@@ -3,53 +3,78 @@ import { Request, Response } from 'express';
 import UserModel, { UserRole } from '../../models/user/user.model';
 
 declare module 'express' {
-    interface Request {
-      user?:  $JwtUserInterface;
-    }
+  interface Request {
+    user?: $JwtUserInterface;
+  }
 }
 
 /**
- * This middleware will check if the use is an Admin,
- * need to be used ONLY after authenticateToken function 
- * @param req 
- * @param res 
- * @param next 
+ * This middleware will check if the user is an Admin,
+ * need to be used ONLY after authenticateToken function!!!
+ * @param req
+ * @param res
+ * @param next
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function AdminLimited (req: Request, res:Response, next:any){
-    /** Check if user is loaded */
-    if (!req.user){
-        return res.status(400).json("User not loaded");
-    }
-    /** Check if user role is Admin */
-    if (!(req.user.role === UserRole.Admin)){
-        return res.status(403).send("User is not an Admin");
-    }
-    /** Go next to function */
-    next()
+export function AdminLimited(req: Request, res: Response, next: any) {
+  /** Check if user is loaded */
+  if (!req.user) {
+    return res.status(400).json('User not loaded');
+  }
+  /** Check if user role is Admin */
+  if (!(req.user.role === UserRole.Admin)) {
+    return res.status(403).send('User is not an Admin');
+  }
+  /** Go next to function */
+  next();
 }
 
 /**
- * **IMPORTANT** MUST CALLED AFTER AUTHENTICATETOKEN 
- * 
+ * This middleware will check if the user is an Organizer Or Admin for sure!,
+ * need to be used ONLY after authenticateToken function!!!
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function OrganizerLimited(req: Request, res: Response, next: any) {
+  /** Check if user is loaded */
+  if (!req.user) {
+    return res.status(400).json('User not loaded');
+  }
+  const uRole = req.user.role;
+  /** Check if user role is Admin or Organizer */
+  if (uRole === UserRole.Admin) {
+    return next();
+  } else if (!(req.user.role === UserRole.Organizer)) {
+    return res.status(403).send('Invalid organizer role');
+  }
+  /** Go next to function */
+  next();
+}
+
+/**
+ * **IMPORTANT** MUST CALLED AFTER AUTHENTICATETOKEN
+ *
  * This middleware check if the user isactive to give him access to course data
- * 
- * @param req 
- * @param res 
- * @param next 
- * @returns 
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function isActiveLimited (req: Request, res: Response, next: any) {
-    /** Check if user is loaded */
-    if (!req.user){
-        return res.status(400).json("User not loaded");
-    }
-    /** Find user, I know user must be loaded to arrive there */
-    const user = await UserModel.findById(req.user._id)
-    if (!(user!.isActive)) {
-        return res.status(403).send("User is not active")
-    }
-    /** Go next to function */
-    next()
+export async function isActiveLimited(req: Request, res: Response, next: any) {
+  /** Check if user is loaded */
+  if (!req.user) {
+    return res.status(400).json('User not loaded');
+  }
+  /** Find user, I know user must be loaded to arrive there */
+  const user = await UserModel.findById(req.user._id);
+  if (!user!.isActive) {
+    return res.status(403).send('User is not active');
+  }
+  /** Go next to function */
+  next();
 }

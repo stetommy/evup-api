@@ -8,6 +8,7 @@ import DocsSwaggerRoute from './routes/docs/swagger.routes'
 import FetchUserRoute from './routes/auth/fetch/fetchUser.routes'
 import AuthExtraRoute from './routes/auth/update/update.routes'
 import PlanRoute from './routes/plan/plan.routes'
+import eventRoutes from "./routes/event/event.routes"
 
 export const RouteList:$RouteInterface[]=[
     {path: '/auth/login', module: AuthLoginRoute},
@@ -19,4 +20,5 @@ export const RouteList:$RouteInterface[]=[
     {path: '/swagger', module: DocsSwaggerRoute},
     {path: '/auth/extra', module: AuthExtraRoute},
     {path: '/plan', module: PlanRoute},
+    {path: '/events', module: eventRoutes},
 ]
