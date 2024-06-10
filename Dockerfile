@@ -35,9 +35,9 @@ CMD ["node", "index.js"]
 
 # set [const prodEnvPath = './.env';] in /root/index.ts file
 # yarn build
-# docker build -t lvdere-api:2.4.0 .
-# docker tag lvdere-api:2.4.0 stetommy/lvdere-api:2.4.0
-# docker push stetommy/lvdere-api:2.4.0
+# docker build -t evup-api:0.0.3 .
+# docker tag evup-api:0.0.3 stetommy/evup-api:0.0.3
+# docker push stetommy/evup-api:0.0.3
 
 # REMOVE PUSHED
 # docker rmi <repository_url>/<image_name>:<tag>
