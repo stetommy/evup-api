@@ -25,7 +25,7 @@ COPY ./src/app/statics/emails /usr/src/app/statics/emails
 COPY ./src/app/statics/pages /usr/src/app/statics/pages
 
 # Expose the port your app runs on
-ENV PORT=8000
+ENV PORT=8010
 EXPOSE $PORT
 
 # Define the command to run your application
